@@ -19,7 +19,8 @@ public class Vehiculo {
     private String patente;
     @Column(name = "precio_diario",precision = 10,scale = 2)
     private double precioDiario;
-
+    @Column(name = "cant_puertas")
+    private Integer cantPuertas;
     @JoinColumn(name = "id_motor", nullable = false)
     @ManyToOne(optional = false)
     private Motor motor;
@@ -30,6 +31,7 @@ public class Vehiculo {
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false)
     private Estado estado = Estado.DISPONIBLE;
+    private String descripcion;
 
     @JoinColumn(name = "id_sucursal", nullable = false)
     @ManyToOne(optional = false)
