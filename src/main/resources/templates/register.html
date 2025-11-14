@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: head-links}"></th:block>
+    <title>Registro - TGSMAX CARS</title>
+    <style>
+        :root{--red:#e74c3c;--blue:#0b5ed7;--muted:#6c757d;--white:#ffffff}
+        
+        .register-container {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%);
+            padding: 40px 0;
+        }
+
+        .register-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .register-header h1 {
+            color: var(--blue);
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .register-header .brand-text {
+            font-weight: 900;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .register-header .brand-text span:first-child {
+            color: var(--red);
+        }
+
+        .register-header .brand-text span:last-child {
+            color: var(--blue);
+        }
+
+        .register-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        .form-control.is-valid {
+            border-color: #198754;
+            box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.1);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        .invalid-feedback, .valid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .invalid-feedback {
+            color: #dc3545;
+        }
+
+        .valid-feedback {
+            color: #198754;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+        }
+
+        .strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            background-color: #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .strength-weak { background-color: #dc3545; width: 33%; }
+        .strength-medium { background-color: #ffc107; width: 66%; }
+        .strength-strong { background-color: #198754; width: 100%; }
+
+        .btn-register {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, var(--red) 0%, #c0392b 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.2);
+        }
+
+        .btn-register:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .form-footer a {
+            color: var(--red);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            border: none;
+            font-size: 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: opacity 0.3s ease;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-success {
+            background-color: #d1edff;
+            color: #0c5460;
+            border-left: 4px solid #0dcaf0;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-home a {
+            color: var(--red);
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-home a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .register-card {
+                margin: 20px;
+                padding: 25px;
+            }
+
+            .register-header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <!-- Header -->
+            <div class="register-header">
+                <div class="brand-text">
+                    <span>TGSMAX</span> <span>CARS</span>
+                </div>
+                <p>Únete a nosotros y gestiona tus reservas</p>
+            </div>
+
+            <!-- Mostrar mensajes de error y éxito -->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <i class="fa-solid fa-exclamation-triangle me-2"></i>
+                <span th:text="${error}">Error message</span>
+            </div>
+            
+            <div th:if="${mensaje}" class="alert alert-success" role="alert">
+                <i class="fa-solid fa-check-circle me-2"></i>
+                <span th:text="${mensaje}">Success message</span>
+            </div>
+
+            <!-- Formulario de registro -->
+            <form th:action="@{/register}" method="post" th:object="${usuario}" id="registerForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nombre_usuario" class="form-label">
+                                <i class="fa-solid fa-user me-1"></i> Nombre
+                            </label>
+                            <input type="text"
+                                   id="nombre_usuario"
+                                   th:field="*{nombre}"
+                                   class="form-control"
+                                   placeholder="Tu nombre"
+                                   required
+                                   minlength="2"
+                                   maxlength="30"
+                                   pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+"
+                                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid' : ''">
+                            <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback">
+                                <span th:errors="*{nombre}">Error en nombre</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="apellido_usuario" class="form-label">
+                                <i class="fa-solid fa-user me-1"></i> Apellido
+                            </label>
+                            <input type="text"
+                                   id="apellido_usuario"
+                                   th:field="*{apellido}"
+                                   class="form-control"
+                                   placeholder="Tu apellido"
+                                   required
+                                   minlength="2"
+                                   maxlength="30"
+                                   pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+"
+                                   th:classappend="${#fields.hasErrors('apellido')} ? 'is-invalid' : ''">
+                            <div th:if="${#fields.hasErrors('apellido')}" class="invalid-feedback">
+                                <span th:errors="*{apellido}">Error en apellido</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email_usuario" class="form-label">
+                        <i class="fa-solid fa-envelope me-1"></i> Email
+                    </label>
+                    <input type="email"
+                           id="email_usuario"
+                           th:field="*{email}"
+                           class="form-control"
+                           placeholder="tu@email.com"
+                           required
+                           maxlength="100"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''">
+                    <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback">
+                        <span th:errors="*{email}">Error en email</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="dni_usuario" class="form-label">
+                                <i class="fa-solid fa-id-card me-1"></i> DNI
+                            </label>
+                            <input type="text"
+                                   id="dni_usuario"
+                                   th:field="*{dni}"
+                                   class="form-control"
+                                   placeholder="12345678"
+                                   required
+                                   maxlength="8"
+                                   pattern="[0-9]{8}"
+                                   th:classappend="${#fields.hasErrors('dni')} ? 'is-invalid' : ''">
+                            <div th:if="${#fields.hasErrors('dni')}" class="invalid-feedback">
+                                <span th:errors="*{dni}">Error en DNI</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="telefono_usuario" class="form-label">
+                                <i class="fa-solid fa-phone me-1"></i> Teléfono
+                            </label>
+                            <input type="tel"
+                                   id="telefono_usuario"
+                                   th:field="*{telefono}"
+                                   class="form-control"
+                                   placeholder="11 1234-5678"
+                                   required
+                                   minlength="8"
+                                   maxlength="20"
+                                   th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid' : ''">
+                            <div th:if="${#fields.hasErrors('telefono')}" class="invalid-feedback">
+                                <span th:errors="*{telefono}">Error en teléfono</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="contrasena" class="form-label">
+                        <i class="fa-solid fa-lock me-1"></i> Contraseña
+                    </label>
+                    <input type="password"
+                           id="contrasena"
+                           th:field="*{contra}"
+                           class="form-control"
+                           placeholder="••••••••"
+                           required
+                           minlength="6"
+                           maxlength="30"
+                           th:classappend="${#fields.hasErrors('contra')} ? 'is-invalid' : ''">
+                    <small class="form-text text-muted">Mínimo 6 caracteres</small>
+                    <div th:if="${#fields.hasErrors('contra')}" class="invalid-feedback">
+                        <span th:errors="*{contra}">Error en contraseña</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">
+                        <i class="fa-solid fa-lock me-1"></i> Confirmar Contraseña
+                    </label>
+                    <input type="password"
+                           id="confirmPassword"
+                           name="confirmPassword"
+                           class="form-control"
+                           placeholder="••••••••"
+                           required
+                           minlength="6">
+                </div>
+
+                <!-- Bootstrap JS bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+</body>
+
+
+</html>
+

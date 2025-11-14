@@ -1,0 +1,82 @@
+<header th:fragment="main-header">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm" style="border-bottom: 2px solid #f0f0f0;">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-0" href="/" style="text-decoration: none;">
+                <!-- Logo sin texto - 150px -->
+                <img th:src="@{/img/logo-sin-texto.png}" src="/img/logo-sin-texto.png" alt="TGSMAX CARS" style="height: 135px; width: auto; object-fit: contain;">
+                <!-- Texto TGSMAX CARS - Muy pegado al logo -->
+                <span style="font-weight: 700; color: #026faa; font-size: 35px; letter-spacing: 1px; line-height: 1; margin-left: -55px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">TGSMAX <span style="color: #f9ad30;">CARS</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Inicio</a></li>
+                    <!-- Ocultar enlaces cuando estamos en /reservas -->
+                    <th:block th:unless="${paginaReservas}">
+                        <li class="nav-item"><a class="nav-link" href="/#autos">Vehículos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/#sucursales">Sucursales</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/#contacto">Contacto</a></li>
+                    </th:block>
+                </ul>
+                
+                <!-- Botones cuando NO está logueado -->
+                <div class="d-flex ms-3" th:if="${session.usuario == null}">
+                    <a href="/login" class="btn btn-outline-pink me-2">
+                        <i class="fas fa-sign-in-alt me-1"></i>Iniciar sesión
+                    </a>
+                    <a href="/register" class="btn btn-primary-brand" style="color: white; border: none;">
+                        <i class="fas fa-user-plus me-1"></i>Registrarse
+                    </a>
+                </div>
+                
+                <!-- Botones cuando SÍ está logueado -->
+                <div class="d-flex ms-3 align-items-center" th:if="${session.usuario != null}">
+                    <!-- Nombre del usuario -->
+                    <div class="dropdown me-2">
+                        <button class="btn btn-outline-pink dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span th:text="${session.userName}">Usuario</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <!-- MENÚ ADMINISTRADOR -->
+                            <th:block th:if="${session.userRoles != null and #lists.contains(session.userRoles, 'ADMINISTRADOR')}">
+                                <li><a class="dropdown-item" href="/admin/dashboard"><i class="fas fa-crown me-2 text-warning"></i>Panel Admin</a></li>
+                                <li><a class="dropdown-item" href="/admin/vendedores/crear"><i class="fas fa-user-plus me-2"></i>Crear Vendedor</a></li>
+                                <li><a class="dropdown-item" href="/admin/usuarios"><i class="fas fa-users me-2"></i>Gestionar Usuarios</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                            </th:block>
+                            
+                            <!-- MENÚ VENDEDOR -->
+                            <th:block th:if="${session.userRoles != null and #lists.contains(session.userRoles, 'VENDEDOR')}">
+                                <li><a class="dropdown-item" href="/vendedor/dashboard"><i class="fas fa-briefcase me-2 text-info"></i>Dashboard Vendedor</a></li>
+                                <li><a class="dropdown-item" href="/vendedor/reservas/pendientes"><i class="fas fa-clock me-2"></i>Reservas Pendientes</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                            </th:block>
+                            
+                            <!-- MENÚ CLIENTE (común para todos) -->
+                            <li><a class="dropdown-item" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user-edit me-2"></i>Mi Perfil</a></li>
+                            <li><a class="dropdown-item" href="/reservas"><i class="fas fa-calendar-check me-2"></i>Mis Reservas</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="/logout" method="post" style="margin: 0;">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Botón Reservar - Ocultar cuando ya estamos en /reservas -->
+                    <a href="/reservas" class="btn btn-primary-brand" style="color: white; border: none;" 
+                       th:unless="${paginaReservas}">
+                        <i class="fas fa-calendar-plus me-1"></i>Reservar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>

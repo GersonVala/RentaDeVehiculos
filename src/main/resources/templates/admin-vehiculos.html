@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <th:block th:replace="~{fragments/head :: head-links}"></th:block>
+    <title>Gestión de Vehículos - TGSMAX CARS</title>
+</head>
+<body>
+    <!-- Header -->
+    <header th:replace="~{fragments/header :: main-header}"></header>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-white text-center py-5" 
+             style="background: linear-gradient(135deg, #ff7a00 0%, #e66d00 100%); min-height: 200px; display: flex; align-items: center;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="fas fa-car me-3"></i>Gestión de Vehículos
+                    </h1>
+                    <p class="lead mb-0">Administrar flota de vehículos disponibles</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Mensajes de feedback -->
+        <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i><span th:text="${mensaje}">Operación exitosa</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i><span th:text="${error}">Error en la operación</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Filtros y Botón Crear -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm" style="border: none; border-radius: 12px;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+                            <h5 class="mb-3 mb-md-0">
+                                <i class="fas fa-car me-2" style="color: #ff7a00;"></i>
+                                Total de vehículos: <span class="badge bg-primary" th:text="${vehiculos.size()}">40</span>
+                            </h5>
+                            <div>
+                                <div class="btn-group me-2" role="group">
+                                    <a th:href="@{/admin/vehiculos}" 
+                                       th:classappend="${param.estado == null or param.estado[0] == 'TODOS'} ? 'active' : ''"
+                                       class="btn btn-outline-primary">
+                                        <i class="fas fa-globe me-1"></i>Todos
+                                    </a>
+                                    <a th:href="@{/admin/vehiculos(estado='DISPONIBLE')}" 
+                                       th:classappend="${param.estado != null and param.estado[0] == 'DISPONIBLE'} ? 'active' : ''"
+                                       class="btn btn-outline-success">
+                                        <i class="fas fa-check-circle me-1"></i>Disponibles
+                                    </a>
+                                    <a th:href="@{/admin/vehiculos(estado='RESERVADO')}" 
+                                       th:classappend="${param.estado != null and param.estado[0] == 'RESERVADO'} ? 'active' : ''"
+                                       class="btn btn-outline-warning">
+                                        <i class="fas fa-clock me-1"></i>Reservados
+                                    </a>
+                                    <a th:href="@{/admin/vehiculos(estado='ENTREGADO')}" 
+                                       th:classappend="${param.estado != null and param.estado[0] == 'ENTREGADO'} ? 'active' : ''"
+                                       class="btn btn-outline-info">
+                                        <i class="fas fa-car me-1"></i>Entregados
+                                    </a>
+                                    <a th:href="@{/admin/vehiculos(estado='EN_MANTENIMIENTO')}" 
+                                       th:classappend="${param.estado != null and param.estado[0] == 'EN_MANTENIMIENTO'} ? 'active' : ''"
+                                       class="btn btn-outline-secondary">
+                                        <i class="fas fa-wrench me-1"></i>En Mantenimiento
+                                    </a>
+                                    <a th:href="@{/admin/vehiculos(estado='DESCOMPUESTO')}" 
+                                       th:classappend="${param.estado != null and param.estado[0] == 'DESCOMPUESTO'} ? 'active' : ''"
+                                       class="btn btn-outline-danger">
+                                        <i class="fas fa-times-circle me-1"></i>Descompuestos
+                                    </a>
+                                </div>
+                                <button class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#modalCrearVehiculo" style="border-radius: 8px;">
+                                    <i class="fas fa-plus me-2"></i>Crear Vehículo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Vehículos -->
+        <div class="card shadow-sm" style="border: none; border-radius: 12px;">
+            <div class="card-header text-white fw-bold" 
+                 style="background: linear-gradient(135deg, #ff7a00 0%, #e66d00 100%); border-radius: 12px 12px 0 0;">
+                <i class="fas fa-table me-2"></i>Listado de Vehículos
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" style="border-radius: 0 0 12px 12px; overflow: hidden;">
+                        <thead style="background: #f8f9fa;">
+                            <tr>
+                                <th class="text-center" style="width: 5%;">ID</th>
+                                <th style="width: 15%;">Modelo</th>
+                                <th class="text-center" style="width: 10%;">Marca</th>
+                                <th class="text-center" style="width: 8%;">Año</th>
+                                <th class="text-center" style="width: 10%;">Patente</th>
+                                <th class="text-center" style="width: 10%;">Precio/Día</th>
+                                <th style="width: 12%;">Categoría</th>
+                                <th class="text-center" style="width: 10%;">Estado</th>
+                                <th style="width: 12%;">Sucursal</th>
+                                <th class="text-center" style="width: 8%;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="vehiculo : ${vehiculos}" 
+                                th:attr="data-estado=${vehiculo.estado.name()}"
+                                style="transition: all 0.3s;">
+                                
+                                <!-- ID -->
+                                <td class="text-center fw-bold" style="color: #026faa;">
+                                    <span th:text="${vehiculo.id_vehiculo}">#001</span>
+                                </td>
+                                
+                                <!-- Modelo -->
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-car me-2" style="color: #ff7a00;"></i>
+                                        <span class="fw-bold" th:text="${vehiculo.modelo}">Corolla</span>
+                                    </div>
+                                </td>
+                                
+                                <!-- Marca -->
+                                <td class="text-center" th:text="${vehiculo.marca}">Toyota</td>
+                                
+                                <!-- Año -->
+                                <td class="text-center" th:text="${vehiculo.anio}">2023</td>
+                                
+                                <!-- Patente -->
+                                <td class="text-center">
+                                    <code class="badge bg-dark" th:text="${vehiculo.patente}">AA123BB</code>
+                                </td>
+                                
+                                <!-- Precio -->
+                                <td class="text-center fw-bold text-success">
+                                    <span th:text="'$' + ${#numbers.formatDecimal(vehiculo.precio_dia, 1, 'POINT', 2, 'COMMA')}">$5.000,00</span>
+                                </td>
+                                
+                                <!-- Categoría -->
+                                <td>
+                                    <span class="badge" 
+                                          th:classappend="${vehiculo.categoria_vehiculo == 'AUTO' ? 'bg-info' : (vehiculo.categoria_vehiculo == 'CAMIONETA' ? 'bg-warning text-dark' : 'bg-secondary')}"
+                                          th:text="${vehiculo.categoria_vehiculo}">
+                                        AUTO
+                                    </span>
+                                </td>
+                                
+                                <!-- Estado -->
+                                <td class="text-center">
+                                    <span class="badge" 
+                                          th:classappend="${vehiculo.estado.name() == 'DISPONIBLE' ? 'bg-success' : (vehiculo.estado.name() == 'RESERVADO' ? 'bg-warning text-dark' : 'bg-danger')}"
+                                          th:text="${vehiculo.estado.name()}">
+                                        DISPONIBLE
+                                    </span>
+                                </td>
+                                
+                                <!-- Sucursal -->
+                                <td>
+                                    <small class="text-muted" th:text="${vehiculo.nombreSucursal}">Resistencia, Chaco</small>
+                                </td>
+                                
+                                <!-- Acciones -->
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-primary" 
+                                                title="Ver detalles"
+                                                data-bs-toggle="modal" 
+                                                th:data-bs-target="'#modalDetalle' + ${vehiculo.id_vehiculo}">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary" 
+                                                th:title="${vehiculo.estado.name() == 'RESERVADO' or vehiculo.estado.name() == 'ENTREGADO' ? 'No se puede cambiar el estado: vehículo en proceso de reserva' : 'Cambiar estado'}"
+                                                th:disabled="${vehiculo.estado.name() == 'RESERVADO' or vehiculo.estado.name() == 'ENTREGADO'}"
+                                                data-bs-toggle="modal" 
+                                                th:data-bs-target="'#modalEstado' + ${vehiculo.id_vehiculo}"
+                                                th:classappend="${vehiculo.estado.name() == 'RESERVADO' or vehiculo.estado.name() == 'ENTREGADO' ? 'disabled' : ''}">
+                                            <i class="fas fa-exchange-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Mensaje si no hay vehículos -->
+                            <tr th:if="${#lists.isEmpty(vehiculos)}">
+                                <td colspan="10" class="text-center py-5">
+                                    <i class="fas fa-car fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No hay vehículos registrados en el sistema</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón Volver -->
+        <div class="text-center mt-4">
+            <a href="/admin/dashboard" class="btn btn-outline-secondary fw-bold px-4" style="border-radius: 8px;">
+                <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
+            </a>
+        </div>
+
+        <!-- MODALES -->
+        
+        <!-- Modal Crear Vehículo -->
+        <div class="modal fade" id="modalCrearVehiculo" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: linear-gradient(135deg, #ff7a00 0%, #e66d00 100%); color: white;">
+                        <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Agregar Nuevo Vehículo</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form th:action="@{/admin/vehiculos/crear}" method="post">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Marca *</label>
+                                    <input type="text" name="marca" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Modelo *</label>
+                                    <input type="text" name="modelo" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Patente *</label>
+                                    <input type="text" name="patente" class="form-control" placeholder="AA123BB" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Color *</label>
+                                    <input type="text" name="color" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Cantidad de Puertas *</label>
+                                    <input type="number" name="cantPuertas" class="form-control" min="0" max="6" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Sucursal *</label>
+                                    <select name="idSucursal" class="form-select" required>
+                                        <option value="">Seleccione...</option>
+                                        <option th:each="sucursal : ${sucursales}" 
+                                                th:value="${sucursal.idSucursal}" 
+                                                th:text="'Nº ' + ${sucursal.idSucursal} + ' - ' + ${sucursal.ciudad} + ', ' + ${sucursal.estado}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-save me-1"></i>Guardar Vehículo</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modales de Detalle (uno por cada vehículo) -->
+        <div th:each="vehiculo : ${vehiculos}">
+            <div class="modal fade" th:id="'modalDetalle' + ${vehiculo.id_vehiculo}" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background: linear-gradient(135deg, #026faa 0%, #0056b3 100%); color: white;">
+                            <h5 class="modal-title">
+                                <i class="fas fa-car me-2"></i>
+                                <span th:text="${vehiculo.marca + ' ' + vehiculo.modelo}">Detalles del Vehículo</span>
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <strong>ID:</strong> <span th:text="${vehiculo.id_vehiculo}">1</span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Patente:</strong> <code th:text="${vehiculo.patente}">AA123BB</code>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Marca:</strong> <span th:text="${vehiculo.marca}">Toyota</span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Modelo:</strong> <span th:text="${vehiculo.modelo}">Corolla</span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Color:</strong> <span th:text="${vehiculo.color}">Blanco</span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Año:</strong> <span th:text="${vehiculo.anio}">2023</span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Puertas:</strong> <span th:text="${vehiculo.cantidad_puertas}">4</span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Categoría:</strong> <span th:text="${vehiculo.categoria_vehiculo}">Auto</span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Precio/Día:</strong> 
+                                    <span class="text-success fw-bold" th:text="'$' + ${#numbers.formatDecimal(vehiculo.precio_dia, 1, 'POINT', 2, 'COMMA')}">$5.000,00</span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Estado:</strong>
+                                    <span class="badge" 
+                                          th:classappend="${vehiculo.estado.name() == 'DISPONIBLE' ? 'bg-success' : (vehiculo.estado.name() == 'RESERVADO' ? 'bg-warning text-dark' : 'bg-danger')}"
+                                          th:text="${vehiculo.estado.name()}">DISPONIBLE</span>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <strong>Sucursal:</strong> <span th:text="${vehiculo.nombreSucursal}">Resistencia, Chaco</span>
+                                </div>
+                                <div class="col-12">
+                                    <h6 class="border-bottom pb-2">Motor</h6>
+                                    <p class="mb-1"><strong>Tipo:</strong> <span th:text="${vehiculo.tipoMotor}">Manual</span></p>
+                                    <p class="mb-1"><strong>Combustible:</strong> <span th:text="${vehiculo.tipoCombustible}">Nafta</span></p>
+                                    <p class="mb-1"><strong>Caballos de Fuerza:</strong> <span th:text="${vehiculo.caballosDeFuerzaMotor}">150</span> HP</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Cambiar Estado -->
+            <div class="modal fade" th:id="'modalEstado' + ${vehiculo.id_vehiculo}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white;">
+                            <h5 class="modal-title"><i class="fas fa-exchange-alt me-2"></i>Cambiar Estado del Vehículo</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form th:action="@{/admin/vehiculos/{id}/cambiar-estado(id=${vehiculo.id_vehiculo})}" method="post">
+                            <div class="modal-body">
+                                <p class="mb-3">
+                                    <strong>Vehículo:</strong> <span th:text="${vehiculo.marca + ' ' + vehiculo.modelo + ' (' + vehiculo.patente + ')'}"></span>
+                                </p>
+                                <p class="mb-3">
+                                    <strong>Estado actual:</strong> 
+                                    <span class="badge" 
+                                          th:classappend="${vehiculo.estado.name() == 'DISPONIBLE' ? 'bg-success' : (vehiculo.estado.name() == 'RESERVADO' ? 'bg-warning text-dark' : 'bg-danger')}"
+                                          th:text="${vehiculo.estado.name()}">DISPONIBLE</span>
+                                </p>
+                                <div class="mb-3">
+                                    <label class="form-label">Nuevo Estado:</label>
+                                    <select name="nuevoEstado" class="form-select" required>
+                                        <option value="">Seleccione...</option>
+                                        <option value="DISPONIBLE">DISPONIBLE</option>
+                                        <option value="EN_MANTENIMIENTO">EN MANTENIMIENTO</option>
+                                        <option value="DESCOMPUESTO">DESCOMPUESTO</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-check me-1"></i>Cambiar Estado</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: main-footer}"></footer>
+
+    <style>
+        .table tbody tr:hover {
+            background-color: rgba(255, 122, 0, 0.05);
+        }
+        
+        .btn-group-sm .btn {
+            padding: 0.25rem 0.5rem;
+        }
+    </style>
+
+</body>
+</html>

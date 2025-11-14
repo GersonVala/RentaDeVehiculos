@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: head-links}"></th:block>
+    <title>TGSMAX CARS - Alquiler de Autos en Argentina</title>
+</head>
+
+<body>
+    <header th:replace="~{fragments/header :: main-header}"></header>
+
+    <main>
+        <!-- SECCIÓN 1: HERO CON BÚSQUEDA -->
+        <section class="hero-section">
+            <div class="hero-bg" th:style="'background-image: url(' + @{/img/img_fondo_pag.png} + '); background-size: cover; background-position: center;'">
+                <div class="hero-overlay" style="background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%);"></div>
+            </div>
+            
+            <div class="container position-relative" style="z-index: 10;">
+                <div class="row align-items-center justify-content-center" style="min-height: 500px;">
+                    <div class="col-lg-8 text-center text-white">
+                        <h1 class="display-3 fw-bold mb-3" style="font-size: 60px; text-shadow: 3px 3px 8px rgba(8, 8, 8, 0.8), 0px 0px 20px rgba(42, 41, 41, 0.7); letter-spacing: 2px;">
+                            RESERVA TU VEHÍCULO<br>AHORA
+                        </h1>
+                        <p class="lead fs-5 mb-5" style="color: #ff7a00; text-shadow: 2px 2px 6px rgba(220, 111, 3, 0.8), 0px 0px 15px rgba(0,0,0,0.6); font-weight: 500;">
+                            Alquiler de autos en Argentina
+                        </p>
+                        
+                        <!-- CALL TO ACTION BUTTON -->
+                        <div class="search-form-wrapper text-center">
+                            <p style="font-size: 20px; color: #333; margin-bottom: 30px; line-height: 1.6;">
+                                Reservá tu vehículo ideal en simples pasos.<br>
+                                Tenemos una amplia variedad de autos para que elijas el que más se adapte a tus necesidades.
+                            </p>
+                            <a th:href="@{/reservas}" class="btn btn-pink btn-lg fw-bold" style="border-radius: 8px; padding: 18px 48px; font-size: 22px; box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);">
+                                <i class="fa-solid fa-car me-2"></i>BUSCAR MI AUTO
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: CATEGORÍAS DE VEHÍCULOS -->
+        <section id="autos" class="py-6" style="background: #f7f7f9; padding-top: 80px; padding-bottom: 80px;">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold" style="color: #1a1a2e; font-size: 48px; margin-bottom: 20px;">CATEGORÍAS DE VEHÍCULOS</h2>
+                    <p class="text-muted" style="font-size: 18px;">Elige el transporte perfecto para tu viaje</p>
+                </div>
+                <div class="row g-5" style="justify-content: center;">
+                    <!-- Lista dinámica de tipos de vehículos desde el backend -->
+                    <div class="col-lg-4 col-md-6" th:each="tipo : ${tiposDeVehiculos}">
+                        <div class="card h-100 shadow-sm text-center" style="border: none; border-radius: 12px; overflow: hidden; background: #ffffff; transition: transform 0.3s;">
+                            <!-- Imágenes dinámicas basadas en el nombre del tipo de vehículo -->
+                            <img th:src="@{/img/img_cat_auto.jpg}" th:if="${tipo.nombre_vehiculo.toLowerCase().contains('auto')}" alt="Auto" style="height: 250px; object-fit: cover;">
+                            <img th:src="@{/img/img_cat_camioneta.jpg}" th:if="${tipo.nombre_vehiculo.toLowerCase().contains('camioneta')}" alt="Camioneta" style="height: 250px; object-fit: cover;">
+                            <img th:src="@{/img/img_cat_moto.jpg}" th:if="${tipo.nombre_vehiculo.toLowerCase().contains('moto')}" alt="Moto" style="height: 250px; object-fit: cover;">
+                            
+                            <div class="card-body" style="padding: 30px;">
+                                <h5 class="card-title fw-bold text-uppercase" style="color: #1a1a2e; font-size: 24px;" th:text="${tipo.nombre_vehiculo}">Tipo de Vehículo</h5>
+                                <p class="card-text text-muted" style="font-size: 16px; margin: 15px 0;" th:text="${tipo.descripcion_vehiculo}">Descripción del vehículo</p>
+                                <a th:href="@{/reservas(tipoVehiculo=${tipo.id_tipo_vehiculo})}" class="btn btn-pink fw-bold" style="padding: 10px 30px; font-size: 16px;">VER MÁS</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: POR QUÉ ELEGIR TGSMAX CARS -->
+        <section class="py-5" style="background: linear-gradient(135deg, #f7f7f9 0%, #ffffff 100%);">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold" style="color: #1a1a2e; font-size: 36px;">¿Por qué elegir TGSMAX CARS?</h2>
+                    <p class="text-muted">Somos tu mejor opción en alquiler de vehículos</p>
+                </div>
+                <div class="row g-4">
+                    <!-- Ventaja 1: Seguridad -->
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <div class="feature-icon">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                            </div>
+                            <h5 class="fw-bold" style="color: #1a1a2e;">Seguridad Total</h5>
+                            <p class="text-muted small">Todos nuestros vehículos cuentan con seguro integral y sistemas de seguridad avanzados</p>
+                        </div>
+                    </div>
+
+                    <!-- Ventaja 2: Precios -->
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <div class="feature-icon">
+                                    <i class="fa-solid fa-tags"></i>
+                                </div>
+                            </div>
+                            <h5 class="fw-bold" style="color: #1a1a2e;">Precios Competitivos</h5>
+                            <p class="text-muted small">Las mejores tarifas del mercado con transparencia total, sin cargos ocultos</p>
+                        </div>
+                    </div>
+
+                    <!-- Ventaja 3: Atención 24/7 -->
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <div class="feature-icon">
+                                    <i class="fa-solid fa-headset"></i>
+                                </div>
+                            </div>
+                            <h5 class="fw-bold" style="color: #1a1a2e;">Atención 24/7</h5>
+                            <p class="text-muted small">Soporte constante para resolver cualquier inconveniente en tu viaje</p>
+                        </div>
+                    </div>
+
+                    <!-- Ventaja 4: Flota Moderna -->
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <div class="feature-icon">
+                                    <i class="fa-solid fa-car-side"></i>
+                                </div>
+                            </div>
+                            <h5 class="fw-bold" style="color: #1a1a2e;">Flota Moderna</h5>
+                            <p class="text-muted small">Vehículos nuevos, revisados y en perfectas condiciones de mantenimiento</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: SUCURSALES POR REGIÓN - CAROUSEL -->
+        <section id="sucursales" class="py-5" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+            <div class="container">
+                <div class="text-center mb-5">
+                    <h2 class="fw-bold text-white" style="font-size: 42px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                        NUESTRAS SUCURSALES EN ARGENTINA
+                    </h2>
+                    <p class="text-white-50" style="font-size: 18px;">Encuentra la sucursal más cercana a tu destino</p>
+                </div>
+                
+                <!-- Carousel de Sucursales -->
+                <div id="sucursalesCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+                    <div class="carousel-indicators" style="bottom: -40px;">
+                        <button type="button" data-bs-target="#sucursalesCarousel" data-bs-slide-to="0" class="active"></button>
+                        <button type="button" data-bs-target="#sucursalesCarousel" data-bs-slide-to="1"></button>
+                    </div>
+
+                    <div class="carousel-inner" style="padding: 0 60px; margin-bottom: 50px;">
+                        <!-- Slide 1: Primeras 3 sucursales -->
+                        <div class="carousel-item active">
+                            <div class="row g-4">
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="card h-100 shadow-lg" style="border: none; border-radius: 20px; overflow: hidden;">
+                                        <div style="position: relative; height: 280px; overflow: hidden;">
+                                            <img th:src="@{/img/sucursal-chaco.jpg}" alt="Resistencia" 
+                                                 style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+                                            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+                                                        background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);">
+                                            </div>
+                                            <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; color: white;">
+                                                <h3 class="fw-bold mb-1" style="font-size: 28px;">
+                                                    <i class="fa-solid fa-location-dot me-2" style="color: #ff7a00;"></i>Resistencia
+                                                </h3>
+                                                <p class="mb-0" style="font-size: 14px; opacity: 0.9;">Chaco</p>
+                                            </div>
+                                        </div>
+                                        <div class="card-body text-center py-3" style="background: white;">
+                                            <div class="mb-2">
+                                                <i class="fa-solid fa-phone me-2" style="color: #ff7a00;"></i>
+                                                <span style="font-weight: 600; color: #1a1a2e;">3624-555-1001</span>
+                                            </div>
+                                            <a th:href="@{/reservas(sucursal=1)}" 
+                                               class="btn fw-bold px-4 py-2"
+                                               style="background: linear-gradient(135deg, #ff7a00 0%, #ff9500 100%); 
+                                                      color: white; border: none; border-radius: 50px; 
+                                                      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+                                                      transition: all 0.3s; font-size: 14px;">
+                                                <i class="fa-solid fa-car me-2"></i>Reservar
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="card h-100 shadow-lg" style="border: none; border-radius: 20px; overflow: hidden;">
+                                        <div style="position: relative; height: 280px; overflow: hidden;">
+                                            <img th:src="@{/img/sucursal-chubut.jpg}" alt="Rawson" 
+                                                 style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+                                            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+                                                        background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);">
+                                            </div>
+                                            <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; color: white;">
+                                                <h3 class="fw-bold mb-1" style="font-size: 28px;">
+                                                    <i class="fa-solid fa-location-dot me-2" style="color: #ff7a00;"></i>Rawson
+                                                </h3>
+                                                <p class="mb-0" style="font-size: 14px; opacity: 0.9;">Chubut</p>
+                                            </div>
+                                        </div>
+                                        <div class="card-body text-center py-3" style="background: white;">
+                                            <div class="mb-2">
+                                                <i class="fa-solid fa-phone me-2" style="color: #ff7a00;"></i>
+                                                <span style="font-weight: 600; color: #1a1a2e;">2804-555-2002</span>
+                                            </div>
+                                            <a th:href="@{/reservas(sucursal=2)}" 
+                                               class="btn fw-bold px-4 py-2"
+                                               style="background: linear-gradient(135deg, #ff7a00 0%, #ff9500 100%); 
+                                                      color: white; border: none; border-radius: 50px; 
+                                                      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+                                                      transition: all 0.3s; font-size: 14px;">
+                                                <i class="fa-solid fa-car me-2"></i>Reservar
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="card h-100 shadow-lg" style="border: none; border-radius: 20px; overflow: hidden;">
+                                        <div style="position: relative; height: 280px; overflow: hidden;">
+                                            <img th:src="@{/img/office-buenos-aires.jpg}" alt="Buenos Aires" 
+                                                 style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+                                            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+                                                        background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);">
+                                            </div>
+                                            <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; color: white;">
+                                                <h3 class="fw-bold mb-1" style="font-size: 28px;">
+                                                    <i class="fa-solid fa-location-dot me-2" style="color: #ff7a00;"></i>Buenos Aires
+                                                </h3>
+                                                <p class="mb-0" style="font-size: 14px; opacity: 0.9;">Buenos Aires</p>
+                                            </div>
+                                        </div>
+                                        <div class="card-body text-center py-3" style="background: white;">
+                                            <div class="mb-2">
+                                                <i class="fa-solid fa-phone me-2" style="color: #ff7a00;"></i>
+                                                <span style="font-weight: 600; color: #1a1a2e;">011-5555-3003</span>
+                                            </div>
+                                            <a th:href="@{/reservas(sucursal=3)}" 
+                                               class="btn fw-bold px-4 py-2"
+                                               style="background: linear-gradient(135deg, #ff7a00 0%, #ff9500 100%); 
+                                                      color: white; border: none; border-radius: 50px; 
+                                                      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+                                                      transition: all 0.3s; font-size: 14px;">
+                                                <i class="fa-solid fa-car me-2"></i>Reservar
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2: Últimas 2 sucursales -->
+                        <div class="carousel-item">
+                            <div class="row g-4 justify-content-center">
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="card h-100 shadow-lg" style="border: none; border-radius: 20px; overflow: hidden;">
+                                        <div style="position: relative; height: 280px; overflow: hidden;">
+                                            <img th:src="@{/img/sucursal-cordoba.jpg}" alt="Córdoba" 
+                                                 style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+                                            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+                                                        background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);">
+                                            </div>
+                                            <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; color: white;">
+                                                <h3 class="fw-bold mb-1" style="font-size: 28px;">
+                                                    <i class="fa-solid fa-location-dot me-2" style="color: #ff7a00;"></i>Córdoba
+                                                </h3>
+                                                <p class="mb-0" style="font-size: 14px; opacity: 0.9;">Córdoba</p>
+                                            </div>
+                                        </div>
+                                        <div class="card-body text-center py-3" style="background: white;">
+                                            <div class="mb-2">
+                                                <i class="fa-solid fa-phone me-2" style="color: #ff7a00;"></i>
+                                                <span style="font-weight: 600; color: #1a1a2e;">0351-555-4004</span>
+                                            </div>
+                                            <a th:href="@{/reservas(sucursal=4)}" 
+                                               class="btn fw-bold px-4 py-2"
+                                               style="background: linear-gradient(135deg, #ff7a00 0%, #ff9500 100%); 
+                                                      color: white; border: none; border-radius: 50px; 
+                                                      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+                                                      transition: all 0.3s; font-size: 14px;">
+                                                <i class="fa-solid fa-car me-2"></i>Reservar
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="card h-100 shadow-lg" style="border: none; border-radius: 20px; overflow: hidden;">
+                                        <div style="position: relative; height: 280px; overflow: hidden;">
+                                            <img th:src="@{/img/sucursal-mendoza.jpg}" alt="Mendoza" 
+                                                 style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;">
+                                            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; 
+                                                        background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);">
+                                            </div>
+                                            <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; color: white;">
+                                                <h3 class="fw-bold mb-1" style="font-size: 28px;">
+                                                    <i class="fa-solid fa-wine-bottle me-2" style="color: #ff7a00;"></i>Mendoza
+                                                </h3>
+                                                <p class="mb-0" style="font-size: 14px; opacity: 0.9;">Mendoza</p>
+                                            </div>
+                                        </div>
+                                        <div class="card-body text-center py-3" style="background: white;">
+                                            <div class="mb-2">
+                                                <i class="fa-solid fa-phone me-2" style="color: #ff7a00;"></i>
+                                                <span style="font-weight: 600; color: #1a1a2e;">0261-555-5005</span>
+                                            </div>
+                                            <a th:href="@{/reservas(sucursal=5)}" 
+                                               class="btn fw-bold px-4 py-2"
+                                               style="background: linear-gradient(135deg, #ff7a00 0%, #ff9500 100%); 
+                                                      color: white; border: none; border-radius: 50px; 
+                                                      box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+                                                      transition: all 0.3s; font-size: 14px;">
+                                                <i class="fa-solid fa-car me-2"></i>Reservar
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controles del carousel -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#sucursalesCarousel" data-bs-slide="prev"
+                            style="width: 50px; justify-content: flex-start;">
+                        <span class="carousel-control-prev-icon" style="background-color: #ff7a00; border-radius: 50%; padding: 15px;"></span>
+                        <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#sucursalesCarousel" data-bs-slide="next"
+                            style="width: 50px; justify-content: flex-end;">
+                        <span class="carousel-control-next-icon" style="background-color: #ff7a00; border-radius: 50%; padding: 15px;"></span>
+                        <span class="visually-hidden">Siguiente</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- CSS para efectos hover en carousel -->
+        <style>
+            #sucursalesCarousel .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 35px rgba(0,0,0,0.4) !important;
+            }
+            
+            #sucursalesCarousel .card:hover img {
+                transform: scale(1.1);
+            }
+            
+            #sucursalesCarousel .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(255, 122, 0, 0.5) !important;
+            }
+            
+            .carousel-indicators button {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background-color: #ff7a00 !important;
+            }
+        </style>
+
+        <!-- CSS adicional para efectos hover -->
+        <style>
+            .card:hover {
+                transform: translateY(-10px) !important;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+            }
+            
+            .card:hover img {
+                transform: scale(1.1);
+            }
+            
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(255, 122, 0, 0.5) !important;
+            }
+            
+            .carousel-indicators button {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background-color: #ff7a00 !important;
+            }
+        </style>
+
+        <!-- SECCIÓN 6: CONTACTO E INFORMACIÓN -->
+        <section id="contacto" class="py-5" style="background: #ffffff;">
+            <div class="container">
+                <div class="row g-5">
+                    <!-- Columna 1: Locaciones -->
+                    <div class="col-lg-4">
+                        <h5 class="fw-bold mb-3" style="color: #1a1a2e; border-bottom: 3px solid var(--red); padding-bottom: 10px;">
+                            Localidades de Alquiler
+                        </h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="#" style="color: #666; text-decoration: none; font-size: 14px; transition: color 0.3s;"><i class="fa-solid fa-location-dot me-2" style="color:var(--red);"></i>Alquiler de autos en Chaco</a></li>
+                            <li class="mb-2"><a href="#" style="color: #666; text-decoration: none; font-size: 14px; transition: color 0.3s;"><i class="fa-solid fa-location-dot me-2" style="color:var(--red);"></i>Alquiler de autos en Chubut</a></li>
+                            <li class="mb-2"><a href="#" style="color: #666; text-decoration: none; font-size: 14px; transition: color 0.3s;"><i class="fa-solid fa-location-dot me-2" style="color:var(--red);"></i>Alquiler de autos en Buenos Aires</a></li>
+                            <li class="mb-2"><a href="#" style="color: #666; text-decoration: none; font-size: 14px; transition: color 0.3s;"><i class="fa-solid fa-location-dot me-2" style="color:var(--red);"></i>Alquiler de autos en Córdoba</a></li>
+                            <li class="mb-2"><a href="#" style="color: #666; text-decoration: none; font-size: 14px; transition: color 0.3s;"><i class="fa-solid fa-location-dot me-2" style="color:var(--red);"></i>Alquiler de autos en Mendoza</a></li>
+                            <li><a href="#" style="color: #666; text-decoration: none; font-size: 14px; transition: color 0.3s;"><i class="fa-solid fa-location-dot me-2" style="color:var(--red);"></i>Ver todas las sucursales</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna 2: Empresa -->
+                    <div class="col-lg-4">
+                        <h5 class="fw-bold mb-3" style="color: #1a1a2e; border-bottom: 3px solid var(--blue); padding-bottom: 10px;">
+                            Información de la Empresa
+                        </h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="#" style="color: #666; text-decoration: none; font-size: 14px; transition: color 0.3s;"><i class="fa-solid fa-info-circle me-2" style="color:var(--blue);"></i>Acerca de TGSMAX CARS</a></li>
+                            <li class="mb-2"><a href="#" style="color: #666; text-decoration: none; font-size: 14px; transition: color 0.3s;"><i class="fa-solid fa-bullseye me-2" style="color:var(--blue);"></i>Nuestra Misión</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Columna 3: Contacto -->
+                    <div class="col-lg-4">
+                        <h5 class="fw-bold mb-3" style="color: #1a1a2e; border-bottom: 3px solid var(--red); padding-bottom: 10px;">
+                            Contacto
+                        </h5>
+                        <div style="background: #f7f7f9; padding: 15px; border-radius: 8px;">
+                            <p style="color: #666; font-size: 14px; margin-bottom: 12px;">
+                                <strong style="color: #1a1a2e;"><i class="fa-solid fa-phone me-2" style="color:var(--red);"></i>Teléfono</strong><br>
+                                +54 (11) 5555-1004<br>
+                                <small class="text-muted">Línea general</small>
+                            </p>
+                            <p style="color: #666; font-size: 14px; margin-bottom: 12px;">
+                                <strong style="color: #1a1a2e;"><i class="fa-solid fa-clock me-2" style="color:var(--blue);"></i>Horarios de Atención</strong><br>
+                                Lunes a Viernes: 8:00 - 20:00hs<br>
+                                Sábado: 9:00 - 15:00hs<br>
+                                <small class="text-muted">Domingo cerrado</small>
+                            </p>
+                            <p style="color: #666; font-size: 14px;">
+                                <strong style="color: #1a1a2e;"><i class="fa-solid fa-envelope me-2" style="color:var(--red);"></i>Email</strong><br>
+                                info@tgsmaxcars.com.ar
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer th:replace="~{fragments/footer :: main-footer}"></footer>
+
+</body>
+</html>

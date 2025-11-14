@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <th:block th:replace="~{fragments/head :: head-links}"></th:block>
+    <title>Gestión de Usuarios - TGSMAX CARS</title>
+</head>
+<body>
+    <!-- Header -->
+    <header th:replace="~{fragments/header :: main-header}"></header>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-white text-center py-5" 
+             style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 200px; display: flex; align-items: center;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="fas fa-users me-3" style="color: #ff7a00;"></i>Gestión de Usuarios
+                    </h1>
+                    <p class="lead mb-0">Lista completa de usuarios registrados en el sistema</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Filtros por Rol -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm" style="border: none; border-radius: 12px;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+                            <h5 class="mb-3 mb-md-0">
+                                <i class="fas fa-filter me-2" style="color: #ff7a00;"></i>
+                                Total de usuarios: <span class="badge bg-primary" th:text="${usuarios.size()}">7</span>
+                            </h5>
+                            <div class="btn-group" role="group">
+                                <a th:href="@{/admin/usuarios}" 
+                                   th:classappend="${param.rol == null or param.rol[0] == 'TODOS'} ? 'active' : ''"
+                                   class="btn btn-outline-primary">
+                                    <i class="fas fa-globe me-1"></i>Todos
+                                </a>
+                                <a th:href="@{/admin/usuarios(rol='ADMINISTRADOR')}" 
+                                   th:classappend="${param.rol != null and param.rol[0] == 'ADMINISTRADOR'} ? 'active' : ''"
+                                   class="btn btn-outline-danger">
+                                    <i class="fas fa-user-shield me-1"></i>Admins
+                                </a>
+                                <a th:href="@{/admin/usuarios(rol='VENDEDOR')}" 
+                                   th:classappend="${param.rol != null and param.rol[0] == 'VENDEDOR'} ? 'active' : ''"
+                                   class="btn btn-outline-success">
+                                    <i class="fas fa-user-tie me-1"></i>Vendedores
+                                </a>
+                                <a th:href="@{/admin/usuarios(rol='CLIENTE')}" 
+                                   th:classappend="${param.rol != null and param.rol[0] == 'CLIENTE'} ? 'active' : ''"
+                                   class="btn btn-outline-info">
+                                    <i class="fas fa-user me-1"></i>Clientes
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Usuarios -->
+        <div class="card shadow-sm" style="border: none; border-radius: 12px;">
+            <div class="card-header text-white fw-bold" 
+                 style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 12px 12px 0 0;">
+                <i class="fas fa-table me-2"></i>Listado de Usuarios
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" style="border-radius: 0 0 12px 12px; overflow: hidden;">
+                        <thead style="background: #f8f9fa;">
+                            <tr>
+                                <th class="text-center" style="width: 5%;">ID</th>
+                                <th style="width: 15%;">Nombre Completo</th>
+                                <th style="width: 20%;">Email</th>
+                                <th class="text-center" style="width: 10%;">DNI</th>
+                                <th class="text-center" style="width: 12%;">Teléfono</th>
+                                <th class="text-center" style="width: 12%;">Rol</th>
+                                <th style="width: 18%;">Sucursal</th>
+                                <th class="text-center" style="width: 8%;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="usuario : ${usuarios}" 
+                                th:data-rol="${usuario.roles[0]}"
+                                class="usuario-row">
+                                <!-- ID -->
+                                <td class="text-center fw-bold" th:text="${usuario.id_usuario}">1</td>
+                                
+                                <!-- Nombre Completo -->
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-2" 
+                                             th:style="${usuario.roles.contains('ADMINISTRADOR')} ? 'background: #dc3545;' : 
+                                                       (${usuario.roles.contains('VENDEDOR')} ? 'background: #28a745;' : 'background: #17a2b8;')"
+                                             style="width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                            <span th:text="${#strings.substring(usuario.nombre_usuario, 0, 1)}">A</span>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold" th:text="${usuario.nombre_usuario + ' ' + usuario.apellido_usuario}">
+                                                Admin Sistema
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                                <!-- Email -->
+                                <td>
+                                    <i class="fas fa-envelope text-muted me-1"></i>
+                                    <span th:text="${usuario.email_usuario}">admin@tgsmax.com</span>
+                                </td>
+                                
+                                <!-- DNI -->
+                                <td class="text-center">
+                                    <code th:text="${usuario.dni_usuario}">00000000</code>
+                                </td>
+                                
+                                <!-- Teléfono -->
+                                <td class="text-center">
+                                    <i class="fas fa-phone text-muted me-1"></i>
+                                    <small th:text="${usuario.telefono_usuario}">1111111111</small>
+                                </td>
+                                
+                                <!-- Rol -->
+                                <td class="text-center">
+                                    <span th:if="${usuario.roles.contains('ADMINISTRADOR')}" 
+                                          class="badge bg-danger">
+                                        <i class="fas fa-user-shield me-1"></i>Admin
+                                    </span>
+                                    <span th:if="${usuario.roles.contains('VENDEDOR')}" 
+                                          class="badge bg-success">
+                                        <i class="fas fa-user-tie me-1"></i>Vendedor
+                                    </span>
+                                    <span th:if="${usuario.roles.contains('CLIENTE')}" 
+                                          class="badge bg-info">
+                                        <i class="fas fa-user me-1"></i>Cliente
+                                    </span>
+                                </td>
+                                
+                                <!-- Sucursal -->
+                                <td>
+                                    <span th:if="${usuario.nombreSucursal != null}">
+                                        <i class="fas fa-building text-muted me-1"></i>
+                                        <small th:text="${usuario.nombreSucursal}">Sucursal #1</small>
+                                    </span>
+                                    <span th:if="${usuario.nombreSucursal == null}" class="text-muted">
+                                        <small>-</small>
+                                    </span>
+                                </td>
+                                
+                                <!-- Acciones -->
+                                <td class="text-center">
+                                    <a th:href="@{/admin/usuarios/{id}(id=${usuario.id_usuario})}" 
+                                       class="btn btn-sm btn-outline-primary" 
+                                       title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón Volver -->
+        <div class="text-center mt-4">
+            <a href="/admin/dashboard" class="btn btn-outline-secondary fw-bold px-4" style="border-radius: 8px;">
+                <i class="fas fa-arrow-left me-2"></i>Volver al Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal Ver Detalle -->
+    <div class="modal fade" id="modalDetalle" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius: 12px;">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-circle me-2" style="color: #ff7a00;"></i>
+                        Detalle del Usuario
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <dl class="row">
+                        <dt class="col-sm-4"><i class="fas fa-hashtag text-muted me-2"></i>ID:</dt>
+                        <dd class="col-sm-8" id="detalle-id">1</dd>
+
+                        <dt class="col-sm-4"><i class="fas fa-user text-muted me-2"></i>Nombre:</dt>
+                        <dd class="col-sm-8" id="detalle-nombre">Admin Sistema</dd>
+
+                        <dt class="col-sm-4"><i class="fas fa-envelope text-muted me-2"></i>Email:</dt>
+                        <dd class="col-sm-8" id="detalle-email">admin@tgsmax.com</dd>
+
+                        <dt class="col-sm-4"><i class="fas fa-id-card text-muted me-2"></i>DNI:</dt>
+                        <dd class="col-sm-8" id="detalle-dni">00000000</dd>
+
+                        <dt class="col-sm-4"><i class="fas fa-phone text-muted me-2"></i>Teléfono:</dt>
+                        <dd class="col-sm-8" id="detalle-telefono">1111111111</dd>
+
+                        <dt class="col-sm-4"><i class="fas fa-user-tag text-muted me-2"></i>Rol:</dt>
+                        <dd class="col-sm-8" id="detalle-rol">ADMINISTRADOR</dd>
+
+                        <dt class="col-sm-4"><i class="fas fa-building text-muted me-2"></i>Sucursal:</dt>
+                        <dd class="col-sm-8" id="detalle-sucursal">-</dd>
+                    </dl>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: main-footer}"></footer>
+
+</body>
+</html>
